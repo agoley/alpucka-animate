@@ -1,0 +1,24 @@
+{
+  "name": "alpucka-animate",
+  "version": "1.0.0",
+  "description": "alpucka animate s a simple and light weight JavaScript library for animations. Compatible with most browsers.",
+  "main": "alpucka-animate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agoley/alpucka-animate.git"
+  },
+  "keywords": [
+    "animate",
+    "javascript",
+    "move"
+  ],
+  "author": "ajgoley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agoley/alpucka-animate/issues"
+  },
+  "homepage": "https://github.com/agoley/alpucka-animate#readme"
+}

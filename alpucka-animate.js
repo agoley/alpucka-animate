@@ -1,6 +1,6 @@
 /**
  * ALPUCKA ANIMATE JS
- * alpucka animate is a lightweight JavaScript library for animations. Compatible with most browsers.
+ * alpucka animate s a simple and light weight JavaScript library for animations. Compatible with most browsers.
  */
 
 // Check Browser Version
@@ -10,24 +10,24 @@ var browserChecks = {
     // Firefox 1.0+
     isFirefox: false,
     // Safari 3.0+ "[object HTMLElementConstructor]" 
-    isSafari:false,
+    isSafari: false,
     // Internet Explorer 6-11
-    isIE:false,
+    isIE: false,
     // Edge 20+
-    isEdge:false,
+    isEdge: false,
     // Chrome 1+
-    isChrome:false,    
+    isChrome: false,
     // Blink engine detection
     isBlink: false
 };
 
-browserChecks.isOpera= (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-browserChecks.isFirefox= typeof InstallTrigger !== 'undefined';
-browserChecks.isSafari=/constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
-browserChecks.isIE=/*@cc_on!@*/false || !!document.documentMode;
-browserChecks.isEdge=!browserChecks.isIE && !!window.StyleMedia;
-browserChecks.isChrome=!!window.chrome && !!window.chrome.webstore;
-browserChecks.isBlink= (browserChecks.isChrome || browserChecks.isOpera) && !!window.CSS;  
+browserChecks.isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+browserChecks.isFirefox = typeof InstallTrigger !== 'undefined';
+browserChecks.isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
+browserChecks.isIE =/*@cc_on!@*/false || !!document.documentMode;
+browserChecks.isEdge = !browserChecks.isIE && !!window.StyleMedia;
+browserChecks.isChrome = !!window.chrome && !!window.chrome.webstore;
+browserChecks.isBlink = (browserChecks.isChrome || browserChecks.isOpera) && !!window.CSS;
 
 // VARIABLES
 var alanimate = {}; // initialize the alanimate object.
@@ -46,10 +46,11 @@ alanimate.directions = ['up', 'down', 'left', 'right'];
  * @param {number} step - optional: Step size for animation interval (controls speed).
  * @param {number} distance - optional: number of pixels to move, defualts to width or height of the parent element for horizontal or vertical movements respectively.
  * @param {number} index - optional: If a non unique identifier is passed use this as the index to use. Defualts to 0. 
+ * @param {boolean} random - optional: adds randomness to the movement. 
  * @return {void}
  */
-alanimate.move = function (identifier, direction, callback, step, distance, index) {    
-    var el = (identifier instanceof HTMLElement)? identifier : alanimate.getElementByIdentifier(identifier, index);
+alanimate.move = function (identifier, direction, callback, step, distance, index, random) {
+    var el = (identifier instanceof HTMLElement) ? identifier : alanimate.getElementByIdentifier(identifier, index);
     if (!el) return;
 
     if (alanimate.directions.indexOf(direction) < 0) {
@@ -57,7 +58,11 @@ alanimate.move = function (identifier, direction, callback, step, distance, inde
         return;
     }
 
-    var stepSize = step? step: 1;
+    var stepSize = step ? step : 1;
+    var rando = random;
+    if (random) {
+        var rn = Math.random();
+    }
 
     var dist;
     if (distance) {
@@ -74,6 +79,7 @@ alanimate.move = function (identifier, direction, callback, step, distance, inde
         if (direction === 'right') dist += el.parentElement.offsetWidth;
     }
 
+    var orDist = dist;
     var pos = ['up', 'down'].indexOf(direction) >= 0 ? alanimate.getElementPos(el, 'top') : alanimate.getElementPos(el, 'left');
     var id = setInterval(frame, 1);
     function frame() {
@@ -81,18 +87,34 @@ alanimate.move = function (identifier, direction, callback, step, distance, inde
             clearInterval(id);
             if (callback) callback();
         } else {
-            var d = (stepSize <= dist)? stepSize : (stepSize - dist); 
-            pos = (['up', 'left'].indexOf(direction) >= 0) ? pos -= d : pos += d;
-            dist = (dist - stepSize);
-            if (['up', 'down'].indexOf(direction) >= 0) el.style.top = pos + 'px';
-            else el.style.left = pos + 'px';
+            if (random) {  
+                if (dist < (rn * orDist)) {
+                    var d = (stepSize <= dist) ? (stepSize + (2*rn)) : (stepSize - dist);
+                    pos = (['up', 'left'].indexOf(direction) >= 0) ? pos -= d : pos += d;
+                    dist = (dist - stepSize);
+                    if (['up', 'down'].indexOf(direction) >= 0) el.style.top = pos + 'px';
+                    else el.style.left = pos + 'px';
+                } else {
+                    var d = (stepSize <= dist) ? stepSize : (stepSize - dist);
+                    pos = (['up', 'left'].indexOf(direction) >= 0) ? pos -= d : pos += d;
+                    dist = (dist - stepSize);
+                    if (['up', 'down'].indexOf(direction) >= 0) el.style.top = pos + 'px';
+                    else el.style.left = pos + 'px';
+                }
+            } else {
+                var d = (stepSize <= dist) ? stepSize : (stepSize - dist);
+                pos = (['up', 'left'].indexOf(direction) >= 0) ? pos -= d : pos += d;
+                dist = (dist - stepSize);
+                if (['up', 'down'].indexOf(direction) >= 0) el.style.top = pos + 'px';
+                else el.style.left = pos + 'px';
+            }
         }
     }
 }
 
 alanimate.getElementPos = function (el, edge) {
-    if (edge === 'top') return p = el.style.top? parseInt(el.style.top.substring(0, el.style.top.length - 2)) : 0;
-    if (edge === 'left') return el.style.left? parseInt(el.style.left.substring(0, el.style.left.length - 2)) : 0;
+    if (edge === 'top') return p = el.style.top ? parseInt(el.style.top.substring(0, el.style.top.length - 2)) : 0;
+    if (edge === 'left') return el.style.left ? parseInt(el.style.left.substring(0, el.style.left.length - 2)) : 0;
 }
 
 /**
@@ -116,23 +138,23 @@ alanimate.getElementByIdentifier = function (identifier, index) {
  * @param {boolean} mobileDisable - if true will not call function is screen size is of mobile width
  */
 
-alanimate.scroll = function(threshold, identifier, classname, mobileDisable){
+alanimate.scroll = function (threshold, identifier, classname, mobileDisable) {
     // Check if mobile width
-    if(mobileDisable && window.innerWidth <= 640) return;
-        
+    if (mobileDisable && window.innerWidth <= 640) return;
+
     var el = alanimate.getElementByIdentifier(identifier, 0);
     var scrollHeight = (browserChecks.isIE ? window.pageYOffset : window.scrollY);
-        
+
     if (!el) return;
 
-    if(scrollHeight > threshold){
-        if(el.className.indexOf(classname) <= 0){
+    if (scrollHeight > threshold) {
+        if (el.className.indexOf(classname) <= 0) {
             el.className += " " + classname;
         }
     }
     else {
-        if(el.className.indexOf(classname) > 0){
+        if (el.className.indexOf(classname) > 0) {
             el.classList.remove(classname);
         }
-    }    
+    }
 }

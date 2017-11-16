@@ -1,6 +1,6 @@
 {
   "name": "alpucka-animate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "alpucka animate is a lightweight JavaScript library for animations. Compatible with most browsers.",
   "main": "alpucka-animate.js",
   "scripts": {

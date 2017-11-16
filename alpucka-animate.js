@@ -30,9 +30,9 @@ browserChecks.isChrome = !!window.chrome && !!window.chrome.webstore;
 browserChecks.isBlink = (browserChecks.isChrome || browserChecks.isOpera) && !!window.CSS;
 
 // VARIABLES
-var alanimate = {}; // initialize the alanimate object.
+var alanimate = {}; // Initialize the alanimate object.
 alanimate.directions = ['up', 'down', 'left', 'right'];
-
+alanimate.paused = false; // Control for escaping a movment.
 
 // FUNCTIONS
 /**
@@ -83,6 +83,9 @@ alanimate.move = function (identifier, direction, callback, step, distance, inde
     var pos = ['up', 'down'].indexOf(direction) >= 0 ? alanimate.getElementPos(el, 'top') : alanimate.getElementPos(el, 'left');
     var id = setInterval(frame, 1);
     function frame() {
+        if (alanimate.paused) {
+            clearInterval(id);            
+        }
         if (dist == 0) {
             clearInterval(id);
             if (callback) callback();
@@ -128,6 +131,14 @@ alanimate.getElementByIdentifier = function (identifier, index) {
     if (!e) e = document.getElementsByTagName(identifier)[(index || 0)];
     if (!e) console.error('alpucka animate: could not find an element with identifier %s and index %d', identifier, index);
     return e;
+}
+
+alanimate.pause = function () {
+    this.paused = true;
+}
+
+alanimate.unpause = function () {
+    this.paused = false;
 }
 
 /**
